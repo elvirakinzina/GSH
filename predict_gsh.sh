@@ -243,7 +243,73 @@ bedtools merge -i ${dir}/All_enhancers_with_flanks.bed >> ${dir}/All_enhancers_w
 
 #==================================================================================
 #
+#    				   Centromeres
+#
+#==================================================================================
+
+echo "Distance from enhancers = ${dist_from_centromeres}" bp
+
+mkdir tmp/centromeres
+dir=tmp/centromeres
+
+# get genomic coordinates of centromeres
+less hgTables_centromeric_regions_38.bed | awk -v OFS="\t" '{print $1, $2, $3}' >> Centromeres.bed 
+
+# get genomic regions of length ${dist_from_centromeres} base pairs flanking centromeres from both sides
+# dist_from_centromeres=50000
+bedtools flank -b ${dist_from_centromeres} -i ${dir}/Centromeres.bed -g data/chromInfo_hg38.txt >> ${dir}/Centromeres_flanks.bed
+
+# merge regions containing centromeres and their flanking regions
+cat ${dir}/Centromeres.bed ${dir}/Centromeres_flanks.bed >> ${dir}/Centromeres_with_flanks.bed
+
+sortBed -i ${dir}/Centromeres_with_flanks.bed >> ${dir}/Centromeres_with_flanks_sorted.bed
+
+bedtools merge -i ${dir}/Centromeres_with_flanks_sorted.bed >> ${dir}/Centromeres_with_flanks_merged.bed
+
+#==================================================================================
+#
+#   	     Gaps: telomeres and other regions that cannot be sequenced
+#
+#==================================================================================
+
+echo "Distance from gaps = ${dist_from_gaps}" bp
+
+mkdir tmp/gaps
+dir=tmp/gaps
+
+# get genomic regions of length ${dist_from_centromeres} base pairs flanking gaps from both sides
+# dist_from_gaps=50000
+bedtools flank -b ${dist_from_gaps} -i ${dir}/hgTables_gaps.bed -g data/chromInfo_hg38.txt >> ${dir}/Gaps_flanks.bed
+
+# merge regions containing gaps and their flanking regions
+cat ${dir}/hgTables_gaps.bed ${dir}/Gaps_flanks.bed >> ${dir}/Gaps_with_flanks.bed
+
+sortBed -i ${dir}/Gaps_with_flanks.bed >> ${dir}/Gaps_with_flanks_sorted.bed
+
+bedtools merge -i ${dir}/Gaps_with_flanks_sorted.bed >> ${dir}/Gaps_with_flanks_merged.bed
+
+#==================================================================================
+#
 #		 	Union of all genomic regions to avoid
 #
 #==================================================================================
+
+# intersect of regions to avoid together
+cat tmp/genes/gencode_v24_annotation_genes_with_flanks_merged.bed tmp/lncrnas/gencode_v24_long_noncoding_RNAs_with_flanks_merged.bed tmp/trnas/gencode_v24_tRNAs_with_flanks_merged.bed tmp/micrornas/ENCFF850OSS_with_flanks_merged.bed tmp/enhancers/All_enhancers_with_flank_merged.bed tmp/oncogenes/gencode_v24_annotation_oncogenes_with_flanks_merged.bed tmp/centromeres/Centromeres_with_flanks_merged.bed tmp/gaps/Gaps_with_flanks_merged.bed >> mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres.bed
+
+sortBed -i mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres.bed >> mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres_sorted.bed
+
+bedtools merge -i mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres_sorted.bed >> mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres_merged.bed
+
+#==================================================================================
+#
+#		 		Safe harbors
+#
+#==================================================================================
+
+# substract all regions to avoid from the whole genome
+bedtools subtract -a all_chrom.bed -b mi_linc_t_rna_genes_oncogenes_enhancers_gaps_centromeres_merged.bed >> Safe_harbors.bed
+
+# get sequences of those regions
+bedtools getfasta -fi ../Gencode/Micro_RNA_genes_oncogenes/GRCh38.p5.genome.fa -bed Safe_harbors.bed >> Safe_harbors.fasta
 

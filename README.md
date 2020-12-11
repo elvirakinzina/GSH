@@ -11,6 +11,7 @@
 * [License](#license)
 
 ## Description
+Finding all genomic safe harbors in the human genome that are universal for most cell types   
 
 ## Features
 
@@ -19,7 +20,9 @@
 - bedtools https://bedtools.readthedocs.io/en/latest/content/installation.html
 
 ## Data
-- microRNAs from Encode (microRNA-seq of CD4-positive, alpha-beta memory T cell, ENCSR199AQA, plus and minus strand)
+- GENCODE annotation of the human genome version 24
+https://www.gencodegenes.org/human/ 
+- microRNAs from ENCODE (microRNA-seq of CD4-positive, alpha-beta memory T cell, ENCSR199AQA, plus and minus strand)
 - t-RNAs
 
 
