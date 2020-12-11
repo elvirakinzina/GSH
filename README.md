@@ -26,7 +26,7 @@
 ## Usage
 
 ```bash
-$ ./predictGSH.sh -dist_from_genes 50000 -dist_from_oncogenes 300000 -dist_from_micrornas 300000 -dist_from_trnas 300000 -dist_from_lncrnas 300000
+$ ./predict_gsh.sh -dist_from_genes 50000 -dist_from_oncogenes 300000 -dist_from_micrornas 300000 -dist_from_trnas 300000 -dist_from_lncrnas 300000
 
 ```
   

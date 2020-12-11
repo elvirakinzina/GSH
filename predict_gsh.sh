@@ -1,5 +1,23 @@
 #!/bin/bash
 
+###################################################################################
+#
+#	        FILE: predict_gsh.sh
+#
+#	       USAGE: ./predict_gsh.sh
+#
+#	 DESCRIPTION: Find all universal genomic safe harbors in the human genome     
+#
+#	      AUTHOR: Elvira Kinzina, elvira@mit.edu
+#
+#	     CREATED: 12/10/2020 10:02 AM              
+#              
+###################################################################################
+#
+#				    Arguments
+#
+#==================================================================================
+
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
@@ -40,11 +58,15 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-#########################################################
+#==================================================================================
 
-mkdir tmp
+mkdir tmp	# Create temporary folder for intermediate files
 
-#########################################################
+#==================================================================================
+#
+#				     Genes
+#
+#==================================================================================
 
 echo "Distance from genes = ${dist_from_genes}" bp
 
@@ -70,8 +92,11 @@ sortBed -i ${dir}/gencode_v24_annotation_genes_with_flanks.bed >> ${dir}/gencode
 
 bedtools merge -i ${dir}/gencode_v24_annotation_genes_with_flanks_sorted.bed >> ${dir}/gencode_v24_annotation_genes_with_flanks_merged.bed
 
-#########################################################
-
+#==================================================================================
+#
+#				   MicroRNAs
+#
+#==================================================================================
 echo "Distance from microRNAs = ${dist_from_micrornas}" bp
 # dist_from_micrornas = 300000
 mkdir tmp/micrornas
@@ -107,8 +132,11 @@ sortBed -i ${dir}/ENCFF850OSS_with_flanks.bed >> ${dir}/ENCFF850OSS_with_flanks_
 bedtools merge -i ${dir}/ENCFF417SFH_with_flanks_sorted.bed >> ${dir}/ENCFF417SFH_with_flanks_merged.bed
 bedtools merge -i ${dir}/ENCFF850OSS_with_flanks_sorted.bed >> ${dir}/ENCFF850OSS_with_flanks_merged.bed
 
-#########################################################
-
+#==================================================================================
+#
+#				     tRNAs
+#
+#==================================================================================
 echo "Distance from tRNAs = ${dist_from_trnas}" bp
 
 mkdir tmp/trnas
@@ -128,7 +156,11 @@ sortBed -i ${dir}/gencode_v24_tRNAs_with_flanks.bed >> ${dir}/gencode_v24_tRNAs_
 
 bedtools merge -i ${dir}/gencode_v24_tRNAs_with_flanks_sorted.bed >> ${dir}/gencode_v24_tRNAs_with_flanks_merged.bed
 
-#########################################################
+#==================================================================================
+#
+#			      Long-non-coding RNAs
+#
+#==================================================================================
 
 echo "Distance from lncRNAs = ${dist_from_lncRNAs}" bp
 
@@ -148,7 +180,11 @@ sortBed -i ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks.bed >> ${dir}/genc
 
 bedtools merge -i ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks_sorted.bed >> ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks_merged.bed
 
-#########################################################
+#==================================================================================
+#
+#				   Oncogenes
+#
+#==================================================================================
 
 echo "Distance from oncogenes = ${dist_from_oncogenes}" bp
 
@@ -174,7 +210,11 @@ sortBed -i ${dir}/gencode_v24_annotation.oncogenes_with_flanks.bed >> ${dir}/gen
 
 bedtools merge -i ${dir}/gencode_v24_annotation_oncogenes_with_flanks_sorted.bed >> ${dir}/gencode_v24_annotation_oncogenes_with_flanks_merged.bed
 
-#########################################################
+#==================================================================================
+#
+#				    Enhancers
+#
+#==================================================================================
 
 echo "Distance from enhancers = ${dist_from_enhancers}" bp
 
@@ -191,14 +231,19 @@ sortBed -i ${dir}/All_enhancers.bed >> ${dir}/All_enhancers_sorted.bed
 bedtools merge -i ${dir}/All_enhancers_sorted.bed >> ${dir}/All_enhancers_merged.bed
 
 # get genomic regions of length ${dist_from_enhancers} base pairs flanking enhancers from both sides
-bedtools flank -b 300000 -i ${dir}/All_enhancers_merged.bed -g data/chromInfo_hg38.txt >> ${dir}/All_enhancers_flanks.bed
+# dist_from_enhancers=300000
+bedtools flank -b ${dist_from_enhancers} -i ${dir}/All_enhancers_merged.bed -g data/chromInfo_hg38.txt >> ${dir}/All_enhancers_flanks.bed
 
 # merge regions containing enhancers and their flanking regions
-cat ${dir}/ENCFF850OSS_no_chrEBV.bed ${dir}/ENCFF850OSS_flanks.bed >> ${dir}/ENCFF850OSS_with_flanks.bed
+cat ${dir}/All_enhancers_merged.bed ${dir}/All_enhancers_flanks.bed >> ${dir}/All_enhancers_with_flanks.bed
 
-sortBed -i ${dir}/ENCFF417SFH_with_flanks.bed >> ${dir}/ENCFF417SFH_with_flanks_sorted.bed
+sortBed -i ${dir}/All_enhancers_with_flanks.bed >> ${dir}/All_enhancers_with_flanks_sorted.bed
 
-bedtools merge -i ${dir}/ENCFF417SFH_with_flanks_sorted.bed >> ${dir}/ENCFF417SFH_with_flanks_merged.bed
+bedtools merge -i ${dir}/All_enhancers_with_flanks.bed >> ${dir}/All_enhancers_with_flank_merged.bed
 
-#########################################################
+#==================================================================================
+#
+#		 	Union of all genomic regions to avoid
+#
+#==================================================================================
 
