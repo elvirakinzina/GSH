@@ -43,7 +43,7 @@ Options:
 	-micrornas: Whether to exclude regions with and around microRNAs (default=true)
 	-trnas: Whether to exclude regions with and around tRNAs (default=true)
 	-lncrnas: Whether to exclude regions with and around lncRNAs (default=true)
-	-enhancers: Whether to exclude regions with and around enhancers (default=true)
+	-enhancers: Whether to exclude regions with and around enhancers (default=false)
 	-centromeres: Whether to exclude regions with and around centromeres (default=true)
 	-gaps: Whether to exclude regions with and around gaps (default=true)
 	-dist_from_genes: Minimal distance from any safe harbor to any gene in bp (default=50000)
