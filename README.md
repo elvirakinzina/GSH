@@ -12,11 +12,11 @@
 
 ## Description
 Pipeline for identification for novel human Genomic Safe Harbor (GSH) sites.
-The following criteria were used computationally predict novel GSH:
+The following criteria were used to computationally predict novel GSH:
 - 50kb away from known genes
 - 300kb away from known oncogenes
 - 300kb away from microRNAs
-- Outside lncRNAs, tRNAs, enhancers, centromeres, telomeres, genomic gaps
+- Outside lncRNAs, tRNAs, centromeres, telomeres, genomic gaps
 
 ## Features
 Identified GSH sites allow for stable and safe expression of genes of interest. The universality of the GSH selection criteria allow for the use of these sites in any cell type.
