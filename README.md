@@ -11,10 +11,16 @@
 * [License](#license)
 
 ## Description
-Pipeline for identification for novel human genomic safe harbor sites
+Pipeline for identification for novel human Genomic Safe Harbor (GSH) sites.
+The following criteria were used computationally predict novel GSH:
+- 50kb away from known genes
+- 300kb away from known oncogenes
+- 300kb away from microRNAs
+- Outside lncRNAs, tRNAs, enhancers, centromeres, telomeres, genomic gaps
 
 ## Features
-Identified safe harbor regions allow for stable and safe expression of a target sequence. They can be universally applied to different cell types.
+Identified GSH sites allow for stable and safe expression of genes of interest. The universality of the GSH selection criteria allow for the use of these sites in any cell type.
+
 ## Prerequisites
 - wig2bed and gtf2bed from BEDOPS https://bedops.readthedocs.io/en/latest/content/installation.html#installation
 - bedtools https://bedtools.readthedocs.io/en/latest/content/installation.html
@@ -72,7 +78,7 @@ Obtaining genomic coordinates and sequences of safe harbors
  ```
  
 ## Reference
-Aznauryan et al. (2020), Bioinformatic screening and phenotypic validation of novel genomic safe harbor sites by targeted integration and transcriptome profiling
+Aznauryan et al. (2020), Discovery and validation of novel human genomic safe harbor sites for gene and cell therapies. Cell Genomics. In review
 
 ## License
 
