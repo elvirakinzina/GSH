@@ -239,31 +239,16 @@ if [ "$micrornas" = true ] ; then
 	mkdir tmp/micrornas
 	dir=tmp/micrornas
 	
-	# convert wig files from ENCODE to BED files
-	for f in ENCFF417SFH.wig ENCFF850OSS.wig; do
-		FILE=${f%%.*}
-		# convert wig files from ENCODE to BED files
-		wig2bed --keep-header < data/$f > ${dir}/${FILE}_bedops.bed
+	# get genomic regions of length ${dist_from_micrornas} base pairs flanking microRNAs from both sides
+	bedtools flank -b ${dist_from_micrornas} -i data/hsa-all.bed -g data/chromInfo_hg38.txt >> ${dir}/Micrornas_flanks.bed
 
-		# remove lines containing '_header'
-		grep -v '_header' ${dir}/${FILE}_bedops.bed >> ${dir}/${FILE}.bed
+	# merge regions containing microRNAs and their flanking regions
+	cat data/hsa-all.bed ${dir}/Micrornas_flanks.bed >> ${dir}/Micrornas_with_flanks.bed
 
-		# exclude regions aligned to the EBV genome (chrEBV) 
-		less ${dir}/${FILE}.bed | grep -v chrEBV >> ${dir}/${FILE}_no_chrEBV.bed 
+	sortBed -i ${dir}/Micrornas_with_flanks.bed >> ${dir}/Micrornas_with_flanks_sorted.bed
 
-		# remove lines containing '_header'
-		grep -v '_header' ${dir}/${FILE}_no_chrEBV.bed >> ${dir}/${FILE}_no_chrEBV2.bed
-
-		# get genomic regions of length ${dist_from_micrornas} base pairs flanking microRNAs from both sides
-		bedtools flank -b ${dist_from_micrornas} -i ${dir}/${FILE}_no_chrEBV2.bed -g data/chromInfo_hg38.txt >> ${dir}/${FILE}_flanks.bed
-
-		# merge regions containing microRNAs and their flanking regions
-		cat ${dir}/${FILE}_no_chrEBV2.bed ${dir}/${FILE}_flanks.bed >> ${dir}/${FILE}_with_flanks.bed
-
-		sortBed -i ${dir}/${FILE}_with_flanks.bed >> ${dir}/${FILE}_with_flanks_sorted.bed
-
-		bedtools merge -i ${dir}/${FILE}_with_flanks_sorted.bed >> ${dir}/${FILE}_with_flanks_merged.bed
-	done
+	bedtools merge -i ${dir}/Micrornas_with_flanks_sorted.bed >> ${dir}/Micrornas_with_flanks_merged.bed
+	
 fi
 
 #=======================================================================
@@ -347,7 +332,7 @@ if [ "$enhancers" = true ] ; then
 	sortBed -i ${dir}/All_enhancers.bed >> ${dir}/All_enhancers_sorted.bed
 
 	bedtools merge -i ${dir}/All_enhancers_sorted.bed >> ${dir}/All_enhancers_merged.bed
-
+	
 	# get genomic regions of length ${dist_from_enhancers} base pairs flanking enhancers from both sides
 	bedtools flank -b ${dist_from_enhancers} -i ${dir}/All_enhancers_merged.bed -g data/chromInfo_hg38.txt >> ${dir}/All_enhancers_flanks.bed
 
@@ -357,6 +342,19 @@ if [ "$enhancers" = true ] ; then
 	sortBed -i ${dir}/All_enhancers_with_flanks.bed >> ${dir}/All_enhancers_with_flanks_sorted.bed
 
 	bedtools merge -i ${dir}/All_enhancers_with_flanks_sorted.bed >> ${dir}/All_enhancers_with_flank_merged.bed
+	
+	
+	
+	# get genomic regions of length ${dist_from_enhancers} base pairs flanking enhancers from both sides
+	bedtools flank -b ${dist_from_enhancers} -i data/All_human_enhancers.bed -g data/chromInfo_hg38.txt >> ${dir}/All_human_enhancers_flanks.bed
+
+	# merge regions containing enhancers and their flanking regions
+	cat data/All_human_enhancers.bed ${dir}/All_human_enhancers_flanks.bed >> ${dir}/All_human_enhancers_with_flanks.bed
+
+	sortBed -i ${dir}/All_human_enhancers_with_flanks.bed >> ${dir}/All_human_enhancers_with_flanks_sorted.bed
+
+	bedtools merge -i ${dir}/All_human_enhancers_with_flanks_sorted.bed >> ${dir}/All_human_enhancers_with_flank_merged.bed
+
 fi
 
 #=======================================================================
@@ -434,7 +432,7 @@ if [ "$genes" = true ] ; then
 fi
 
 if [ "$micrornas" = true ] ; then
-	cat tmp/micrornas/ENCFF850OSS_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
+	cat tmp/micrornas/Micrornas_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
 fi
 
 if [ "$trnas" = true ] ; then
@@ -446,7 +444,7 @@ if [ "$lncrnas" = true ] ; then
 fi
 
 if [ "$enhancers" = true ] ; then
-	cat tmp/enhancers/All_enhancers_with_flank_merged.bed >> ${dir}/Regions_to_avoid.bed
+	cat tmp/enhancers/All_human_enhancers_with_flank_merged.bed >> ${dir}/Regions_to_avoid.bed
 fi
 
 if [ "$centromeres" = true ] ; then
