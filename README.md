@@ -15,8 +15,8 @@ Pipeline for identification for novel human Genomic Safe Harbor (GSH) sites.
 The following criteria were used to computationally predict novel GSH:
 - 50kb away from known genes
 - 300kb away from known oncogenes
-- 300kb away from microRNAs
-- 150kb away from lncRNAs, tRNAs, centromeres, telomeres, genomic gaps
+- 300kb away from microRNAs, centromeres, telomeres, genomic gaps
+- 150kb away from lncRNAs, tRNAs
 - 20kb away from enhancers
 
 ## Features
@@ -68,14 +68,14 @@ Options:
  
 Example:
 ```bash
-./predict_gsh.sh -dist_from_trnas 150000 -dist_from_gaps 150000 -dist_from_centromeres 150000 -dist_from_enahcners 20000 -dist_from_lncrnas 150000
+./predict_gsh.sh -dist_from_trnas 150000 -dist_from_gaps 300000 -dist_from_centromeres 300000 -dist_from_enahcners 20000 -dist_from_lncrnas 150000
 Distance from genes = 50000 bp
 Distance from microRNAs = 300000 bp
 Distance from tRNAs = 150000 bp
 Distance from lncRNAs = 150000 bp
 Distance from oncogenes = 300000 bp
-Distance from centromeres = 150000 bp
-Distance from gaps =150000 bp
+Distance from centromeres = 300000 bp
+Distance from gaps = 300000 bp
 Merging all genomic regions to avoid
 Obtaining genomic coordinates and sequences of safe harbors
  ```
