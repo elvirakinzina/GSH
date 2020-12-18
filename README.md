@@ -52,6 +52,8 @@ Options:
 	-lncrnas: Whether to exclude regions with and around lncRNAs (default=true)
 	-centromeres: Whether to exclude regions with and around centromeres (default=true)
 	-gaps: Whether to exclude regions with and around gaps (default=true)
+	-enhancers: Whether to exclude enhancer regions (default=true)
+
 	-dist_from_genes: Minimal distance from any safe harbor to any gene in bp (default=50000)
 	-dist_from_oncogenes: Minimal distance from any safe harbor to any oncogene in bp (default=300000)
 	-dist_from_micrornas: Minimal distance from any safe harbor to any microRNA in bp (default=300000)
@@ -59,19 +61,20 @@ Options:
 	-dist_from_lncrnas: Minimal distance from any safe harbor to any long-non-coding RNA in bp (default=0)
 	-dist_from_centromeres: Minimal distance from any safe harbor to any centromere in bp (default=0)
 	-dist_from_gaps: Minimal distance from any safe harbor to any gaps in bp (default=0)
+	-dist_from_enahncers: Minimal distance from any safe harbor to any enhancer in bp (default=0)
 	-h, --help: Prints help
  ```
  
 Example:
 ```bash
-./predict_gsh.sh -dist_from_trnas 0 -dist_from_gaps 0 -dist_from_centromeres 0 -enhancers false -dist_from_lncrnas 0
+./predict_gsh.sh -dist_from_trnas 150000 -dist_from_gaps 150000 -dist_from_centromeres 150000 -dist_from_enahcners 20000 -dist_from_lncrnas 150000
 Distance from genes = 50000 bp
 Distance from microRNAs = 300000 bp
-Distance from tRNAs = 0 bp
-Distance from lncRNAs = 0 bp
+Distance from tRNAs = 150000 bp
+Distance from lncRNAs = 150000 bp
 Distance from oncogenes = 300000 bp
-Distance from centromeres = 0 bp
-Distance from gaps = 0 bp
+Distance from centromeres = 150000 bp
+Distance from gaps =150000 bp
 Merging all genomic regions to avoid
 Obtaining genomic coordinates and sequences of safe harbors
  ```
