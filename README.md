@@ -16,10 +16,11 @@ The following criteria were used to computationally predict novel GSH:
 - 50kb away from known genes
 - 300kb away from known oncogenes
 - 300kb away from microRNAs
-- Outside lncRNAs, tRNAs, centromeres, telomeres, genomic gaps
+- 150kb away from lncRNAs, tRNAs, centromeres, telomeres, genomic gaps
+- 20kb away from enhancers
 
 ## Features
-Identified GSH sites allow for stable and safe expression of genes of interest. The universality of the GSH selection criteria allow for the use of these sites in any cell type.
+Produced genomic coordinates serve as comutationally predicted GSH sites for primary human T cells due to T cell specificity of the miRNA-seq data from ENCODE. These new sites were then shown to locate at a distance larger than 300kb from any miRNA stored in MirGeneDB.
 
 ## Prerequisites
 - wig2bed and gtf2bed from BEDOPS https://bedops.readthedocs.io/en/latest/content/installation.html#installation
@@ -29,6 +30,7 @@ Identified GSH sites allow for stable and safe expression of genes of interest. 
 - GENCODE annotation of the human genome version 24: comprehensive gene annotation, long non-coding RNA gene annotation, and predicted tRNA genes
 https://www.gencodegenes.org/human/ 
 - Cancer Gene Census (CGC) genes from tier 1 (extensive evidence of association with cancer available) and tier 2 (strong indications of the association exist) https://cancer.sanger.ac.uk/census
+- miRNAseq of Homo sapiens naive thymus-derived CD4-positive, alpha-beta T cell male adult (29 years), ENCODE ENCSR113YFQ.
 - microRNAs from MirGeneDB (based on Fromm et al, A Uniform System For The Annotation Of Human microRNA Genes And The Evolution Of The Human microRNAome. Annu Rev Genet. 2015, 49: 213–242) https://mirgenedb.org
 - Genome sequence, GRCh38.p5 assembly
 - Centromeric regions http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/centromeres.txt.gz
