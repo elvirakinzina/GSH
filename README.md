@@ -40,7 +40,7 @@ https://www.gencodegenes.org/human/
 
 Usage:
 ```bash
-  ./predict_gsh.sh [-genes] [-oncogenes] [-micrornas] [-trnas] [-lncrnas] [-centromeres] [-gaps] [-dist_from_genes] [-dist_from_oncogenes] [-dist_from_micrornas] [-dist_from_trnas] [-dist_from_lncrnas] [-dist_from_centromeres] [-dist_from_gaps] [-h|--help]	
+  ./predict_gsh.sh [-genes] [-oncogenes] [-micrornas] [-trnas] [-enhancers] [-lncrnas] [-centromeres] [-gaps] [-dist_from_genes] [-dist_from_enhancers] [-dist_from_oncogenes] [-dist_from_micrornas] [-dist_from_trnas] [-dist_from_lncrnas] [-dist_from_centromeres] [-dist_from_gaps] [-h|--help]	
 ```
   
 Options:
