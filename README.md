@@ -20,7 +20,7 @@ The following criteria were used to computationally predict novel GSH:
 - 20kb away from enhancers
 
 ## Features
-Produced genomic coordinates serve as comutationally predicted GSH sites for primary human T cells due to T cell specificity of the miRNA-seq data from ENCODE. These new sites were then shown to locate at a distance larger than 200kb from any miRNA stored in MirGeneDB.
+Produced genomic coordinates serve as computationally predicted GSH sites based on previously established as well as newly introduced criteria. All criteria used are universal for all cell types, with additional ncRNA input from microRNA-seq of CD4 T cells.
 
 ## Prerequisites
 - wig2bed and gtf2bed from BEDOPS https://bedops.readthedocs.io/en/latest/content/installation.html#installation
