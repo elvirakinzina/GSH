@@ -20,7 +20,7 @@ The following criteria were used to computationally predict novel GSH:
 - 20kb away from enhancers
 
 ## Features
-Produced genomic coordinates serve as computationally predicted GSH sites based on previously established as well as newly introduced criteria. All criteria used are universal for all cell types, with additional ncRNA input from microRNA-seq of CD4 T cells.
+Produced genomic coordinates serve as computationally predicted GSH sites based on previously established as well as newly introduced criteria. All criteria used are universal for all cell types, with additional ncRNA input from microRNA-seq of human T cells.
 
 ## Prerequisites
 - wig2bed and gtf2bed from BEDOPS https://bedops.readthedocs.io/en/latest/content/installation.html#installation
