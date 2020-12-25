@@ -21,26 +21,21 @@
 #=======================================================================
 
 # THE DEFAULTS INITIALIZATION
-# ./predict_gsh.sh -dist_from_trnas 0 -dist_from_gaps 0 -dist_from_centromeres 0 -enhancers false -dist_from_lncrnas 0
+# ./predict_gsh.sh -genes true -oncogenes true -micrornas true -trnas true -lncrnas true -enhancers true -centromeres true -gaps true -dist_from_genes 50000 -dist_from_oncogenes 300000 -dist_from_micrornas 300000 -dist_from_trnas 150000 -dist_from_lncrnas 150000 -dist_from_enhancers 20000 -dist_from_centromeres 300000 -dist_from_gaps 300000
+
 genes=true
 oncogenes=true
 micrornas=true
-t_cell_specific_micrornas=false
 trnas=true
 lncrnas=true
-ncrnas=false
-smrnas=false
 enhancers=true
 centromeres=true
 gaps=true
 dist_from_genes=50000
 dist_from_oncogenes=300000
 dist_from_micrornas=300000
-dist_from_t_cell_micrornas=300000
 dist_from_trnas=150000
 dist_from_lncrnas=150000
-dist_from_ncrnas=0
-dist_from_smrnas=300000
 dist_from_enhancers=20000
 dist_from_centromeres=300000
 dist_from_gaps=300000
@@ -94,11 +89,6 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -t_cell_specific_micrornas)
-    t_cell_specific_micrornas="$2"
-    shift # past argument
-    shift # past value
-    ;;
     -trnas)
     trnas="$2"
     shift # past argument
@@ -149,11 +139,6 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -dist_from_t_cell_micrornas)
-    dist_from_t_cell_micrornas="$2"
-    shift # past argument
-    shift # past value
-    ;;
     -dist_from_trnas)
     dist_from_trnas="$2"
     shift # past argument
@@ -161,16 +146,6 @@ case $key in
     ;;
     -dist_from_lncrnas)
     dist_from_lncrnas="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    -dist_from_ncrnas)
-    dist_from_ncrnas="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    -dist_from_smrnas)
-    dist_from_smrnas="$2"
     shift # past argument
     shift # past value
     ;;
@@ -215,15 +190,15 @@ if [ "$genes" = true ] ; then
 	dir=tmp/genes
 
 	# get gene annotation from GENCODE
-#	less gencode.v24.annotation.gtf | grep "\tgene\t" >> ${dir}/gencode_gene_anotation.gtf
+	less gencode.v24.annotation.gtf | grep "\tgene\t" >> ${dir}/gencode_gene_anotation.gtf
 
-#	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' ${dir}/gencode_gene_anotation.gtf >> ${dir}/gencode_v24_annotation_genes_transcript_id.gtf
+	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' ${dir}/gencode_gene_anotation.gtf >> ${dir}/gencode_v24_annotation_genes_transcript_id.gtf
 
 	# get genomic coordinates of all annotated genes in the human genome in the BED format
-#	gtf2bed < ${dir}/gencode_v24_annotation_genes_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_genes.bed
+	gtf2bed < ${dir}/gencode_v24_annotation_genes_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_genes.bed
 
 	# get genomic regions of length ${dist_from_genes} base pairs flanking genes from both sides
-	bedtools slop -b ${dist_from_genes} -i data/gencode_v24_annotation_genes.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_annotation_genes_with_flanks.bed
+	bedtools slop -b ${dist_from_genes} -i ${dir}/gencode_v24_annotation_genes.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_annotation_genes_with_flanks.bed
 
 	# merge regions containing genes and their flanking regions
 	sortBed -i ${dir}/gencode_v24_annotation_genes_with_flanks.bed >> ${dir}/gencode_v24_annotation_genes_with_flanks_sorted.bed
@@ -244,13 +219,13 @@ if [ "$oncogenes" = true ] ; then
 	dir=tmp/oncogenes
 
 	# get GENCODE gene annotation for oncogenes from COSMIC (Cancer Gene Census)
-#	grep -f data/Oncogenes_id_list.txt tmp/genes/gencode_v24_annotation_genes_transcript_id.gtf >> tmp/oncogenes/gencode_oncogenes_annotation_transcript_id.gtf
+	grep -f data/Oncogenes_id_list.txt tmp/genes/gencode_v24_annotation_genes_transcript_id.gtf >> tmp/oncogenes/gencode_oncogenes_annotation_transcript_id.gtf
 
 	# get genomic coordinates of the oncogenes in the BED format
-#	gtf2bed < ${dir}/gencode_oncogenes_annotation_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_oncogenes.bed
+	gtf2bed < ${dir}/gencode_oncogenes_annotation_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_oncogenes.bed
 
 	# get genomic regions of length ${dist_from_oncogenes} base pairs flanking oncogenes from both sides
-	bedtools slop -b ${dist_from_oncogenes} -i data/gencode_v24_annotation_oncogenes.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_annotation_oncogenes_with_flanks.bed
+	bedtools slop -b ${dist_from_oncogenes} -i ${dir}/gencode_v24_annotation_oncogenes.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_annotation_oncogenes_with_flanks.bed
 
 	# merge regions containing oncogenes and their flanking regions
 	sortBed -i ${dir}/gencode_v24_annotation_oncogenes_with_flanks.bed >> ${dir}/gencode_v24_annotation_oncogenes_with_flanks_sorted.bed
@@ -268,24 +243,6 @@ if [ "$micrornas" = true ] ; then
 	echo "Distance from microRNAs = ${dist_from_micrornas}" bp
 	mkdir tmp/micrornas
 	dir=tmp/micrornas
-	
-	if [ "$t_cell_specific_micrornas" = true ] ; then
-		echo "Distance from T cell specific microRNAs = ${dist_from_t_cell_micrornas}" bp
-		# convert wig files from ENCODE to BED files and exclude regions aligned to the EBV genome (chrEBV) 
-		wig2bed < data/ENCFF417SFH.wig | grep -v chrEBV > ${dir}/ENCFF417SFH.bed
-		wig2bed < data/ENCFF850OSS.wig | grep -v chrEBV > ${dir}/ENCFF850OSS.bed
-
-		# get genomic regions of length ${dist_from_micrornas} base pairs flanking microRNAs from both sides
-		bedtools slop -b ${dist_from_t_cell_micrornas} -i ${dir}/ENCFF417SFH.bed -g data/chromInfo_hg38.txt >> ${dir}/ENCFF417SFH_with_flanks.bed
-		bedtools slop -b ${dist_from_t_cell_micrornas} -i ${dir}/ENCFF850OSS.bed -g data/chromInfo_hg38.txt >> ${dir}/ENCFF850OSS_with_flanks.bed
-
-		# merge regions containing microRNAs and their flanking regions
-		sortBed -i ${dir}/ENCFF417SFH_with_flanks.bed >> ${dir}/ENCFF417SFH_with_flanks_sorted.bed
-		sortBed -i ${dir}/ENCFF850OSS_with_flanks.bed >> ${dir}/ENCFF850OSS_with_flanks_sorted.bed
-
-		bedtools merge -i ${dir}/ENCFF417SFH_with_flanks_sorted.bed >> ${dir}/ENCFF417SFH_with_flanks_merged.bed
-		bedtools merge -i ${dir}/ENCFF850OSS_with_flanks_sorted.bed >> ${dir}/ENCFF850OSS_with_flanks_merged.bed
-	fi
 	
 	# get genomic regions of length ${dist_from_micrornas} base pairs flanking microRNAs from both sides
 	bedtools slop -b ${dist_from_micrornas} -i data/hsa-all.bed -g data/chromInfo_hg38.txt >> ${dir}/Micrornas_with_flanks.bed
@@ -310,12 +267,12 @@ if [ "$lncrnas" = true ] ; then
 	dir=tmp/lncrnas
 
 	# get lncRNA annotation from GENCODE
-#	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' gencode.v24.long_noncoding_RNAs.gtf >> ${dir}/gencode_v24_long_noncoding_RNAs_transcript_id.gtf
+	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' gencode.v24.long_noncoding_RNAs.gtf >> ${dir}/gencode_v24_long_noncoding_RNAs_transcript_id.gtf
 
-#	gtf2bed < ${dir}/gencode_v24_long_noncoding_RNAs_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_long_noncoding_RNAs.bed
+	gtf2bed < ${dir}/gencode_v24_long_noncoding_RNAs_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_long_noncoding_RNAs.bed
 
 	# get genomic regions of length ${dist_from_lncrnas} base pairs flanking lncRNAs from both sides
-	bedtools slop -b ${dist_from_lncrnas} -i data/gencode_v24_long_noncoding_RNAs.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks.bed
+	bedtools slop -b ${dist_from_lncrnas} -i ${dir}/gencode_v24_long_noncoding_RNAs.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks.bed
 
 	# merge regions containing lncRNAs and their flanking regions
 	sortBed -i ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks.bed >> ${dir}/gencode_v24_long_noncoding_RNAs_with_flanks_sorted.bed
@@ -345,59 +302,6 @@ if [ "$trnas" = true ] ; then
 	sortBed -i ${dir}/gencode_v24_tRNAs_with_flanks.bed >> ${dir}/gencode_v24_tRNAs_with_flanks_sorted.bed
 
 	bedtools merge -i ${dir}/gencode_v24_tRNAs_with_flanks_sorted.bed >> ${dir}/gencode_v24_tRNAs_with_flanks_merged.bed
-	
-fi
-
-#=======================================================================
-#
-#						     small RNAs
-#
-#=======================================================================
-
-if [ "$smrnas" = true ] ; then
-	echo "Distance from smRNAs = ${dist_from_smrnas}" bp
-
-	mkdir tmp/smrnas
-	dir=tmp/smrnas
-
-	for f in $(cat data/smRNAseq_files.txt); do
-		FILE=${f%%.*}
-		# convert BigWig files from ENCODE to wig files
-		./bigWigToWig data/${FILE}.bigWig ${dir}/${FILE}.wig;
-		
-		# convert wig files to BED files and exclude regions aligned to the EBV genome (chrEBV) 
-		wig2bed --zero-indexed < ${dir}/${FILE}.wig | grep -v chrEBV > ${dir}/${FILE}.bed
-
-		# get genomic regions of length ${dist_from_micrornas} base pairs flanking smRNAs from both sides
-		bedtools slop -b ${dist_from_smrnas} -i ${dir}/${FILE}.bed -g data/chromInfo_hg38.txt >> ${dir}/${FILE}_with_flanks.bed
-
-		# merge regions containing microRNAs and their flanking regions
-		sortBed -i ${dir}/${FILE}_with_flanks.bed >> ${dir}/${FILE}_with_flanks_sorted.bed
-
-		bedtools merge -i ${dir}/${FILE}_with_flanks_sorted.bed >> ${dir}/${FILE}_with_flanks_merged.bed
-		
-		cat ${dir}/${FILE}_with_flanks_merged.bed >> ${dir}/All_small_RNAs.bed
-	done
-fi
-#=======================================================================
-#
-#						     ncRNAs
-#
-#=======================================================================
-
-if [ "$ncrnas" = true ] ; then
-	echo "Distance from ncRNAs = ${dist_from_ncrnas}" bp
-
-	mkdir tmp/ncrnas
-	dir=tmp/ncrnas
-
-	# get genomic regions of length ${dist_from_trnas} base pairs flanking tRNAs from both sides
-	bedtools slop -b ${dist_from_ncrnas} -i data/All_small_RNAs.bed -g data/chromInfo.txt >> ${dir}/All_small_RNAs_with_flanks.bed
-
-	# merge regions containing tRNAs and their flanking regions
-	sortBed -i ${dir}/All_small_RNAs_with_flanks.bed >> ${dir}/All_small_RNAs_with_flanks_sorted.bed
-
-	bedtools merge -i ${dir}/All_small_RNAs_with_flanks_sorted.bed >> ${dir}/All_small_RNAs_with_flanks_merged.bed
 	
 fi
 
@@ -493,9 +397,6 @@ if [ "$genes" = true ] ; then
 fi
 
 if [ "$micrornas" = true ] ; then
-	if [ "$t_cell_specific_micrornas" = true ] ; then
-		cat tmp/micrornas/ENCFF850OSS_with_flanks_merged.bed tmp/micrornas/ENCFF417SFH_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
-	fi
 	cat tmp/micrornas/Micrornas_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
 fi
 
@@ -505,14 +406,6 @@ fi
 
 if [ "$lncrnas" = true ] ; then
 	cat tmp/lncrnas/gencode_v24_long_noncoding_RNAs_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
-fi
-
-if [ "$ncrnas" = true ] ; then
-	cat tmp/ncrnas/All_small_RNAs_with_flanks_merged.bed >> ${dir}/Regions_to_avoid.bed
-fi
-
-if [ "$smrnas" = true ] ; then
-	cat tmp/smrnas/All_small_RNAs.bed >> ${dir}/Regions_to_avoid.bed
 fi
 
 if [ "$enhancers" = true ] ; then
