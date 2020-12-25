@@ -20,7 +20,7 @@ The following criteria were used to computationally predict novel GSH:
 - 20kb away from enhancers
 
 ## Features
-Produced genomic coordinates serve as computationally predicted GSH sites based on previously established as well as newly introduced criteria. All criteria used are universal for all cell types, with additional ncRNA input from microRNA-seq of human T cells.
+Produced genomic coordinates serve as computationally predicted GSH sites based on previously established as well as newly introduced criteria. All criteria used are universal for all cell types.
 
 ## Prerequisites
 - wig2bed and gtf2bed from BEDOPS https://bedops.readthedocs.io/en/latest/content/installation.html#installation
@@ -30,9 +30,8 @@ Produced genomic coordinates serve as computationally predicted GSH sites based 
 - GENCODE annotation of the human genome version 24: comprehensive gene annotation, long non-coding RNA gene annotation, and predicted tRNA genes
 https://www.gencodegenes.org/human/ 
 - Cancer Gene Census (CGC) genes from tier 1 (extensive evidence of association with cancer available) and tier 2 (strong indications of the association exist) https://cancer.sanger.ac.uk/census
-- miRNAseq of Homo sapiens naive thymus-derived CD4-positive, alpha-beta T cell male adult (29 years), ENCODE ENCSR113YFQ. https://www.encodeproject.org/experiments/ENCSR113YFQ/
 - microRNAs from MirGeneDB (based on Fromm et al, A Uniform System For The Annotation Of Human microRNA Genes And The Evolution Of The Human microRNAome. Annu Rev Genet. 2015, 49: 213–242) https://mirgenedb.org
-- Enhancers were obtained from EnhacerAtlas http://www.enhanceratlas.org/downloadv2.php
+- Enhancers were obtained from EnhacerAtlas 2.0 http://www.enhanceratlas.org/downloadv2.php
 - Genome sequence, GRCh38.p5 assembly
 - Centromeric regions http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/centromeres.txt.gz
 - Gaps in the genome sequence which include telomeres http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/gap.txt.gz
