@@ -97,5 +97,3 @@ The output is two files: Safe_harbors.bed that has genomic coordinates of all re
 ## Reference
 Aznauryan et al. (2020), Discovery and validation of novel human genomic safe harbor sites for gene and cell therapies. Cell Genomics. In review
 
-## License
-
