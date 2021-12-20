@@ -67,33 +67,43 @@ Options:
  
 Running with the default parameters:
 ```bash
-./predict_gsh.sh
-Distance from genes = 50000 bp
-Distance from oncogenes = 300000 bp
-Distance from microRNAs = 300000 bp
-Distance from tRNAs = 150000 bp
-Distance from lncRNAs = 150000 bp
-Distance from enhancers = 20000 bp
-Distance from centromeres = 300000 bp
-Distance from gaps = 300000 bp
-Merging all genomic regions to avoid
-Obtaining genomic coordinates and sequences of safe harbors
+./predict_gsh.sh 
+
+```
+Output: 
+```
+  Getting gene annotation from GENCODE
+  Distance from genes = 50000 bp
+  Distance from oncogenes = 300000 bp
+  Distance from microRNAs = 300000 bp
+  Distance from tRNAs = 150000 bp
+  Distance from lncRNAs = 150000 bp
+  Distance from enhancers = 20000 bp
+  Distance from centromeres = 300000 bp
+  Distance from gaps = 300000 bp
+  Merging all genomic regions to avoid
+  Obtaining genomic coordinates and sequences of safe harbors
  ```
+ 
 Running with modified parameters:
 ```bash
 ./predict_gsh.sh -trnas false -dist_from_lncrnas 50000 -dist_from_enhancers 0 -dist_from_centromeres 0 -dist_from_gaps 0
-Distance from genes = 50000 bp
-Distance from oncogenes = 300000 bp
-Distance from microRNAs = 300000 bp
-Distance from lncRNAs = 50000 bp
-Distance from enhancers = 0 bp
-Distance from centromeres = 0 bp
-Distance from gaps = 0 bp
-Merging all genomic regions to avoid
-Obtaining genomic coordinates and sequences of safe harbors
+```
+Output:
+```
+  Getting gene annotation from GENCODE
+  Distance from genes = 50000 bp
+  Distance from oncogenes = 300000 bp
+  Distance from microRNAs = 300000 bp
+  Distance from lncRNAs = 50000 bp
+  Distance from enhancers = 0 bp
+  Distance from centromeres = 0 bp
+  Distance from gaps = 0 bp
+  Merging all genomic regions to avoid
+  Obtaining genomic coordinates and sequences of safe harbors
  ```
 The output is two files: Safe_harbors.bed that has genomic coordinates of all regions potentially containing safe harbors and Safe_harbors.fasta contains sequences of these regions.
 
 ## Reference
-Aznauryan et al. (2020), Discovery and validation of novel human genomic safe harbor sites for gene and cell therapies. Cell Genomics. In review
+Aznauryan et al. (2022), Discovery and validation of novel human genomic safe harbor sites for gene and cell therapies. Cell Genomics. In review
 
