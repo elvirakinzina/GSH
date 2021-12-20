@@ -69,6 +69,13 @@ while [[ $# -gt 0 ]]
 do
 key="$1"
 
+if [ "$key" = "-h" ] || [ "$key" = "--help" ] || [ "$key" = "-genes" ] || [ "$key" = "-oncogenes" ] || [ "$key" = "-micrornas" ] || [ "$key" = "-trnas" ] || [ "$key" = "-lncrnas" ] || [ "$key" = "ncrnas" ] || [ "$key" = "-smrnas" ] || [ "$key" = "-enhancers" ] || [ "$key" = "-centromeres" ] || [ "$key" = "-gaps" ] || [ "$key" = "-dist_from_genes" ] || [ "$key" = "-dist_from_genes" ] || [ "$key" = "-dist_from_genes" ] || [ "$key" = "-dist_from_genes" ] || [ "$key" = "-dist_from_oncogenes" ] || [ "$key" = "-dist_from_micrornas" ] || [ "$key" = "-dist_from_trnas" ] || [ "$key" = "-dist_from_lncrnas" ] || [ "$key" = "-dist_from_micrornas" ] || [ "$key" = "-dist_from_lncrnas" ] || [ "$key" = "-dist_from_enhancers" ] || [ "$key" = "-dist_from_centromeres" ] || [ "$key" = "-dist_from_gaps" ] ; then
+    echo ""
+else
+    echo "Invalid argument: $key"
+    exit 1
+fi
+
 case $key in
     -h|--help)
     print_help
@@ -168,6 +175,25 @@ esac
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
+for boolean_arg in $genes $oncogenes $micrornas $trnas $lncrnas $ncrnas $smrnas $enhancers $centromeres $gaps
+do
+    if [ "$boolean_arg" != true ] ; then
+        if [ "$boolean_arg" != false ] ; then
+    	    echo "Invalid value '$boolean_arg'. Arguments '-genes', '-oncogenes', '-micrornas', '-trnas',  '-lncrnas', '-ncrnas ', '-smrnas', '-enhancers', '-centromeres', '-gaps' all must be boolean"
+    	    exit 1
+        fi
+    fi
+done
+
+re='^[0-9]+$'
+for boolean_arg in $dist_from_genes $dist_from_oncogenes $dist_from_micrornas $dist_from_tcrnas $dist_from_lncrnas $dist_from_ncrnas $dist_from_smrnas $dist_from_enhancers $dist_from_centromeres $dist_from_gaps
+do
+    if ! [[ "$boolean_arg" =~ $re ]] ; then
+        echo "Invalid value '$boolean_arg'. Arguments '-dist_from_genes', '-dist_from_oncogenes', '-dist_from_micrornas', '-dist_from_trnas',  '-dist_from_lncrnas', '-dist_from_ncrnas ', '-dist_from_smrnas', '-dist_from_enhancers', '-dist_from_centromeres', '-dist_from_gaps' all must be numeric"
+        exit 1
+    fi
+done
+
 #=======================================================================
 
 DIRECTORY=tmp
@@ -177,11 +203,22 @@ fi
 
 mkdir tmp	# Create temporary folder for intermediate files
 
+if [ "$genes" = true ] || [ "$oncogenes" = true ]; then
+	echo "Getting gene annotation from GENCODE"
+	# get gene annotation from GENCODE
+	mkdir tmp/gene_annotation
+	dir=tmp/gene_annotation
+	less gencode.v24.annotation.gtf | grep "\tgene\t" >> ${dir}/gencode_gene_anotation.gtf
+	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' ${dir}/gencode_gene_anotation.gtf >> ${dir}/gencode_v24_annotation_genes_transcript_id.gtf
+fi
+
 #=======================================================================
 #
 #						     Genes
 #
 #=======================================================================
+
+
 
 if [ "$genes" = true ] ; then
 	echo "Distance from genes = ${dist_from_genes}" bp
@@ -189,13 +226,9 @@ if [ "$genes" = true ] ; then
 	mkdir tmp/genes
 	dir=tmp/genes
 
-	# get gene annotation from GENCODE
-	less gencode.v24.annotation.gtf | grep "\tgene\t" >> ${dir}/gencode_gene_anotation.gtf
-
-	awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' ${dir}/gencode_gene_anotation.gtf >> ${dir}/gencode_v24_annotation_genes_transcript_id.gtf
 
 	# get genomic coordinates of all annotated genes in the human genome in the BED format
-	gtf2bed < ${dir}/gencode_v24_annotation_genes_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_genes.bed
+	gtf2bed < tmp/gene_annotation/gencode_v24_annotation_genes_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_genes.bed
 
 	# get genomic regions of length ${dist_from_genes} base pairs flanking genes from both sides
 	bedtools slop -b ${dist_from_genes} -i ${dir}/gencode_v24_annotation_genes.bed -g data/chromInfo.txt >> ${dir}/gencode_v24_annotation_genes_with_flanks.bed
@@ -219,7 +252,7 @@ if [ "$oncogenes" = true ] ; then
 	dir=tmp/oncogenes
 
 	# get GENCODE gene annotation for oncogenes from COSMIC (Cancer Gene Census)
-	grep -f data/Oncogenes_id_list.txt tmp/genes/gencode_v24_annotation_genes_transcript_id.gtf >> tmp/oncogenes/gencode_oncogenes_annotation_transcript_id.gtf
+	grep -f data/Oncogenes_id_list.txt tmp/gene_annotation/gencode_v24_annotation_genes_transcript_id.gtf >> tmp/oncogenes/gencode_oncogenes_annotation_transcript_id.gtf
 
 	# get genomic coordinates of the oncogenes in the BED format
 	gtf2bed < ${dir}/gencode_oncogenes_annotation_transcript_id.gtf | awk -v OFS="\t" '{print $1, $2, $3}' >> ${dir}/gencode_v24_annotation_oncogenes.bed
