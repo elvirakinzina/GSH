@@ -72,6 +72,7 @@ Running with the default parameters:
 ```
 Output: 
 ```
+  Getting gene annotation from GENCODE
   Distance from genes = 50000 bp
   Distance from oncogenes = 300000 bp
   Distance from microRNAs = 300000 bp
@@ -90,6 +91,7 @@ Running with modified parameters:
 ```
 Output:
 ```
+  Getting gene annotation from GENCODE
   Distance from genes = 50000 bp
   Distance from oncogenes = 300000 bp
   Distance from microRNAs = 300000 bp
