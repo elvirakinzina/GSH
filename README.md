@@ -67,7 +67,10 @@ Options:
  
 Running with the default parameters:
 ```bash
-./predict_gsh.sh ```
+./predict_gsh.sh 
+
+```
+
 Distance from genes = 50000 bp
 Distance from oncogenes = 300000 bp
 Distance from microRNAs = 300000 bp
