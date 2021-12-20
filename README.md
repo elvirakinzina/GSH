@@ -70,15 +70,23 @@ Running with the default parameters:
 ./predict_gsh.sh 
 
 ```
-
+Output: \\
 Distance from genes = 50000 bp
+
 Distance from oncogenes = 300000 bp
+
 Distance from microRNAs = 300000 bp
+
 Distance from tRNAs = 150000 bp
+
 Distance from lncRNAs = 150000 bp
+
 Distance from enhancers = 20000 bp
+
 Distance from centromeres = 300000 bp
+
 Distance from gaps = 300000 bp
+
 Merging all genomic regions to avoid
 Obtaining genomic coordinates and sequences of safe harbors
  
